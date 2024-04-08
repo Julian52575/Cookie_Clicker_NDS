@@ -2,4 +2,4 @@
 
 ##  A demake of cookie clicker for the nintendo DS
 
-In collaboration with [Neo](https://github.com/NeoBrtn)
+A week-end project with my friend [Neo](https://github.com/NeoBrtn).
