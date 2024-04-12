@@ -17,7 +17,19 @@ namespace cookie {
             ~sprite();
             void
                 render(OamState *);
-            
+
+        public:
+            void
+                setColor(int color);
+            void
+                setXposition(int x);
+            void
+                setYposition(int y);
+            void
+                setSize(SpriteSize size);
+            void
+                setColorFormat(SpriteColorFormat colorFormat);
+        
         private:
             int _x = 0;
             int _y = 0;

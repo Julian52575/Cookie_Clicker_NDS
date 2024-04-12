@@ -25,6 +25,8 @@ init_down_screen(void)
 
 int main(void) {
 	cookie::sprite sprite = cookie::sprite();
+	sprite.setColor(ARGB16(1, 255, 0, 0));
+	sprite.setSize(SpriteSize_16x32);
 	touchPosition touchXY;
 	irqSet(IRQ_VBLANK, Vblank);
 	consoleDemoInit();
