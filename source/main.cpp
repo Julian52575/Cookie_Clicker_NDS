@@ -1,39 +1,40 @@
-#include <nds.h>
-
-#include <stdio.h>
+/*
+**	Rulian & Neo weekend experience 2024
+**	Cookie clicker nds
+**  main
+*/
+#include "cookie.hpp"
+#include "sprite.hpp"
 
 volatile int frame = 0;
 
-void Vblank() {
+static void Vblank() {
 	frame++;
 }
+
+
+static void
+init_down_screen(void)
+{
+	//Set Bottom Screen
+	videoSetModeSub(MODE_0_2D);
+	vramSetBankD(VRAM_D_SUB_SPRITE);
 	
+	oamInit(&oamSub, SpriteMapping_1D_128, false);
+}
+
 int main(void) {
+	cookie::sprite sprite = cookie::sprite();
 	touchPosition touchXY;
-
 	irqSet(IRQ_VBLANK, Vblank);
-
 	consoleDemoInit();
+	init_down_screen();
 
-	iprintf("      Hello DS dev'rs\n");
-	iprintf("     \x1b[32mwww.devkitpro.org\n");
-	iprintf("   \x1b[32;1mwww.drunkencoders.com\x1b[39m");
- 
-	while(1) {
-	
-		swiWaitForVBlank();
-		scanKeys();
-		int keys = keysDown();
-		if (keys & KEY_START) break;
+	while(1) {	
+		sprite.render(&oamSub);
 
-		touchRead(&touchXY);
-
-		// print at using ansi escape sequence \x1b[line;columnH 
-		iprintf("\x1b[10;0HFrame = %d",frame);
-		iprintf("\x1b[16;0HTouch x = %04X, %04X\n", touchXY.rawx, touchXY.px);
-		iprintf("Touch y = %04X, %04X\n", touchXY.rawy, touchXY.py);		
-	
+		swiWaitForVBlank(); // clean the screen
+		oamUpdate(&oamSub);
 	}
-
 	return 0;
 }
