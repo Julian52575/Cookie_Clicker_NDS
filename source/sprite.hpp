@@ -13,33 +13,41 @@ namespace cookie {
 
     class sprite {
         public:
-            sprite(int x = 10, int y = 10, int color = ARGB16(1, 55, 12, 55), SpriteSize size = SpriteSize_16x16, SpriteColorFormat _colorFormat = SpriteColorFormat_Bmp);
+            sprite(int color = ARGB16(1, 55, 12, 55), SpriteSize size = SpriteSize_16x16, SpriteColorFormat _colorFormat = SpriteColorFormat_Bmp);
             ~sprite();
+
+        public:
             void
-                render(OamState *);
+                render(OamState *screen, int x, int y);
+        public:
+            void
+                setSprite(u8 *tilePtr, size_t tileLenght, u8 *palettePtr, size_t paletteLen);
 
         public:
             void
                 setColor(int color);
-            void
-                setXposition(int x);
-            void
-                setYposition(int y);
             void
                 setSize(SpriteSize size);
             void
                 setColorFormat(SpriteColorFormat colorFormat);
         
         private:
-            int _x = 0;
-            int _y = 0;
+            SpriteColorFormat _colorFormat = SpriteColorFormat_Bmp;
             int _color = ARGB16(1, 55, 12, 55);
         
-        public:
+        private:
             SpriteSize _size = SpriteSize_16x16;
-            SpriteColorFormat _colorFormat = SpriteColorFormat_Bmp;
             u16* _gfx = nullptr;
 
+        private:
+            u8 _id = 0;
+
+        private:
+            bool _holdSprite = false;
+            u8 *_spriteTiles = nullptr;
+            size_t _tilesLen = 0;
+            u8 *_spritePalette = nullptr;
+            size_t _paletteLen = 0;
     };
 
 };// namespace cookie

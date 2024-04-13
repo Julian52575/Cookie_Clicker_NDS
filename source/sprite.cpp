@@ -8,9 +8,12 @@
 #include "sprite.hpp"
 
 namespace cookie {
+    static u8 SPRITE_SET_COUNT = 0;
 
-    sprite::sprite(int x, int y, int color, SpriteSize size, SpriteColorFormat colorFormat) : _x(x), _y(y), _color(color), _size(size), _colorFormat(colorFormat)
+    sprite::sprite(int color, SpriteSize size, SpriteColorFormat colorFormat) : _color(color), _size(size), _colorFormat(colorFormat)
     {
+        SPRITE_SET_COUNT += 1;
+        this->_id = SPRITE_SET_COUNT;
     }
 
     sprite::~sprite()
@@ -18,19 +21,36 @@ namespace cookie {
     }
 
     void
-    sprite::render(OamState *screen_info)
+    sprite::setSprite(u8 *tilePtr, size_t tileLenght, u8 *palettePtr, size_t paletteLen)
+    {
+        this->_holdSprite = true;
+        this->_spriteTiles = tilePtr;
+        this->_tilesLen = tileLenght;
+        this->_spritePalette = palettePtr;
+        this->_paletteLen = paletteLen;
+    }
+
+    void
+    sprite::render(OamState *screen_info, int x, int y)
     {
         if (this->_gfx == nullptr) {
             this->_gfx = oamAllocateGfx(screen_info, this->_size, this->_colorFormat);
         }
-        dmaFillHalfWords(this->_color, this->_gfx, SPRITE_SIZE_PIXELS(this->_size) );
+        if (this->_holdSprite == false) {
+            dmaFillHalfWords(this->_color, this->_gfx, SPRITE_SIZE_PIXELS(this->_size) );
+        } else {
+            //      Load palette
+            dmaCopy(this->_spritePalette, SPRITE_PALETTE, this->_paletteLen);
+            //      Copy sprite data into gfx
+            dmaCopy(this->_spriteTiles, this->_gfx, this->_tilesLen);
+        }
 		oamSet(screen_info, //screen info
-                1,  //id
-                this->_x, this->_y, //position
+                this->_id,  //id
+                x, y, //position
                 0, //priority
                 15, //palette
                 this->_size, //
-                SpriteColorFormat_Bmp, //color format
+                this->_colorFormat, //color format
                 this->_gfx, //gfx
                 0, //affine
                 false, //rotated sprite's size doubling
@@ -44,16 +64,6 @@ namespace cookie {
     sprite::setColor(int color)
     {
         this->_color = color;
-    }
-    void
-    sprite::setXposition(int x)
-    {
-        this->_x = x;
-    }
-    void
-    sprite::setYposition(int y)
-    {
-        this->_y = y;
     }
 
     void

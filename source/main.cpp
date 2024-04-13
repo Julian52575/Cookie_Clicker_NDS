@@ -5,33 +5,69 @@
 */
 #include "cookie.hpp"
 #include "sprite.hpp"
+#include <nds/arm9/video.h>
 
-#include <cookie_sprite.h>
+volatile int frame = 0;
+
+static void Vblank() {
+	frame++;
+}
+
+
+static void
+init_down_screen(void)
+{
+	//Set Bottom Screen
+	videoSetModeSub(MODE_0_2D);
+	vramSetBankD(VRAM_D_SUB_SPRITE);
+	
+	oamInit(&oamSub, SpriteMapping_1D_128, false);
+}
+static void
+init_main_screen(void)
+{
+	videoSetMode(MODE_0_2D);
+	vramSetBankA(VRAM_A_MAIN_BG);
+	oamInit(&oamMain, SpriteMapping_1D_128, false);
+}
+
+static void
+init_ds(void)
+{
+	irqSet(IRQ_VBLANK, Vblank);
+	//consoleDemoInit();
+	init_down_screen();
+	init_main_screen();
+}
+
 
 int main(void) {
+	cookie::sprite move = cookie::sprite();
+	cookie::sprite sprite = cookie::sprite();
+	sprite.setColor(ARGB16(1, 255, 0, 0));
+	sprite.setSize(SpriteSize_64x64);
+	sprite.setColorFormat(SpriteColorFormat_Bmp);
+	init_ds();
+	int y = 0;
 
-	videoSetMode(MODE_0_2D);
-	vramSetBankA(VRAM_A_MAIN_SPRITE);
-	oamInit(&oamMain, SpriteMapping_1D_128, false);
+	while(1) {	
+		sprite.render(&oamMain, 10, 10);
 
-	u16 *gfx1 = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
-	u8 *gfx_frame1 = (u8*)cookie_spriteTiles;
+			scanKeys();
+			int keys = keysDown();
+			if (keys & KEY_START) {
+				sprite.setSprite((u8*) cookie_spriteTiles, cookie_spriteTilesLen, (u8*) cookie_spritePal, cookie_spritePalLen);
+				move.setColor(ARGB16(1, 255, 255, 0));
+			}
 
-	dmaCopy(cookie_spritePal, SPRITE_PALETTE, 64*64);
+		
+		move.render(&oamSub, 80, y++);
+		if (y > 100)
+			y = 0;
 
-	while(1) {
-		dmaCopy(gfx_frame1, gfx1, 64*64);
-
-		oamSet(
-			&oamMain,
-			0,
-			32, 32,
-			0, 16,
-			SpriteSize_64x64, SpriteColorFormat_256Color,
-			gfx1,
-			-1, false, false, false, false, false);
 
 		swiWaitForVBlank(); // clean the screen
+		oamUpdate(&oamSub);
 		oamUpdate(&oamMain);
 	}
 	return 0;
