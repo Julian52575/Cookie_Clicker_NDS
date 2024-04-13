@@ -21,7 +21,7 @@ namespace cookie {
                 render(OamState *screen, int x, int y);
         public:
             void
-                setSprite(u8 *tilePtr, size_t tileLenght, u8 *palettePtr, size_t paletteLen);
+                setSprite(u8 *tilePtr, unsigned int tileLenght, u8 *palettePtr, unsigned int paletteLen);
 
         public:
             void
@@ -45,9 +45,9 @@ namespace cookie {
         private:
             bool _holdSprite = false;
             u8 *_spriteTiles = nullptr;
-            size_t _tilesLen = 0;
+            unsigned int _tilesLen = 0;
             u8 *_spritePalette = nullptr;
-            size_t _paletteLen = 0;
+            unsigned int _paletteLen = 0;
     };
 
 };// namespace cookie

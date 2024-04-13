@@ -21,7 +21,7 @@ namespace cookie {
     }
 
     void
-    sprite::setSprite(u8 *tilePtr, size_t tileLenght, u8 *palettePtr, size_t paletteLen)
+    sprite::setSprite(u8 *tilePtr, unsigned int tileLenght, u8 *palettePtr, unsigned int paletteLen)
     {
         this->_holdSprite = true;
         this->_spriteTiles = tilePtr;
@@ -40,9 +40,9 @@ namespace cookie {
             dmaFillHalfWords(this->_color, this->_gfx, SPRITE_SIZE_PIXELS(this->_size) );
         } else {
             //      Load palette
-            dmaCopy(this->_spritePalette, SPRITE_PALETTE, this->_paletteLen);
+            dmaCopy(this->_spritePalette, SPRITE_PALETTE, 512);
             //      Copy sprite data into gfx
-            dmaCopy(this->_spriteTiles, this->_gfx, this->_tilesLen);
+            dmaCopy(this->_spriteTiles, this->_gfx, SPRITE_SIZE_PIXELS(this->_size));
         }
 		oamSet(screen_info, //screen info
                 this->_id,  //id
@@ -56,8 +56,7 @@ namespace cookie {
                 false, //rotated sprite's size doubling
                 false, //hiding
                 false, false, // v / h flip
-                true); //mosaic
-        return;
+                false); //mosaic
     }
 
     void

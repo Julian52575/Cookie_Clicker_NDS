@@ -12,7 +12,7 @@
 #include "/opt/devkitpro/libnds/include/nds.h"
 #include <stdio.h>
 #include "/opt/devkitpro/libnds/include/nds/arm9/sprite.h"
-#include <cookie_sprite.h>
-
+#include <cookie_sprite16.h>
+#include <character16x16.h>
 
 #endif /* !COOKIE_HPP_ */
