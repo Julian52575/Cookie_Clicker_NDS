@@ -6,37 +6,33 @@
 #include "cookie.hpp"
 #include "sprite.hpp"
 
-volatile int frame = 0;
-
-static void Vblank() {
-	frame++;
-}
-
-
-static void
-init_down_screen(void)
-{
-	//Set Bottom Screen
-	videoSetModeSub(MODE_0_2D);
-	vramSetBankD(VRAM_D_SUB_SPRITE);
-	
-	oamInit(&oamSub, SpriteMapping_1D_128, false);
-}
+#include <cookie_sprite.h>
 
 int main(void) {
-	cookie::sprite sprite = cookie::sprite();
-	sprite.setColor(ARGB16(1, 255, 0, 0));
-	sprite.setSize(SpriteSize_16x32);
-	touchPosition touchXY;
-	irqSet(IRQ_VBLANK, Vblank);
-	consoleDemoInit();
-	init_down_screen();
 
-	while(1) {	
-		sprite.render(&oamSub);
+	videoSetMode(MODE_0_2D);
+	vramSetBankA(VRAM_A_MAIN_SPRITE);
+	oamInit(&oamMain, SpriteMapping_1D_128, false);
+
+	u16 *gfx1 = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
+	u8 *gfx_frame1 = (u8*)cookie_spriteTiles;
+
+	dmaCopy(cookie_spritePal, SPRITE_PALETTE, 64*64);
+
+	while(1) {
+		dmaCopy(gfx_frame1, gfx1, 64*64);
+
+		oamSet(
+			&oamMain,
+			0,
+			32, 32,
+			0, 16,
+			SpriteSize_64x64, SpriteColorFormat_256Color,
+			gfx1,
+			-1, false, false, false, false, false);
 
 		swiWaitForVBlank(); // clean the screen
-		oamUpdate(&oamSub);
+		oamUpdate(&oamMain);
 	}
 	return 0;
 }
