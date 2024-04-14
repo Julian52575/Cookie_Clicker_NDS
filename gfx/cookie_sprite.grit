@@ -1,5 +1,5 @@
 -m! # Exclude map from output (default).
--gB1 # Bit depth of the output
+-gB8 # Bit depth of the output
 -gT 00FF00 # Set the transparency color to Green
 
 #metatile

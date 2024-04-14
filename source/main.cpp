@@ -58,14 +58,17 @@ int main(void) {
 	int y = 0;
 
 	while(1) {	
-		sprite.render(&oamMain, 80, 50);
 		cookie.render(&oamMain, 10, 10);
+		sprite.render(&oamMain, 80, 50);
 
 			scanKeys();
 			int keys = keysDown();
 			if (keys & KEY_START) {
 				cookie.setSprite((u8*) cookie_sprite16Tiles, cookie_sprite16TilesLen, (u8*) cookie_sprite16Pal, cookie_sprite16PalLen);
 				move.setColor(ARGB16(1, 255, 255, 0));
+			} else if (keys & KEY_SELECT) {
+				cookie.disableSprite();
+				move.setColor(ARGB16(1, 222, 222, 0));
 			}
 
 		

@@ -21,6 +21,8 @@ namespace cookie {
                 render(OamState *screen, int x, int y);
         public:
             void
+                disableSprite(void);
+            void
                 setSprite(u8 *tilePtr, unsigned int tileLenght, u8 *palettePtr, unsigned int paletteLen);
 
         public:

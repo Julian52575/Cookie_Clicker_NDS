@@ -21,6 +21,11 @@ namespace cookie {
     }
 
     void
+    sprite::disableSprite(void)
+    {
+        this->_holdSprite = false;
+    }
+    void
     sprite::setSprite(u8 *tilePtr, unsigned int tileLenght, u8 *palettePtr, unsigned int paletteLen)
     {
         this->_holdSprite = true;
@@ -40,7 +45,7 @@ namespace cookie {
             dmaFillHalfWords(this->_color, this->_gfx, SPRITE_SIZE_PIXELS(this->_size) );
         } else {
             //      Load palette
-            dmaCopy(this->_spritePalette, SPRITE_PALETTE, 512);
+            dmaCopy(this->_spritePalette, SPRITE_PALETTE, this->_paletteLen);
             //      Copy sprite data into gfx
             dmaCopy(this->_spriteTiles, this->_gfx, SPRITE_SIZE_PIXELS(this->_size));
         }
